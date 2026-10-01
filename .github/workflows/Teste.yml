@@ -2,8 +2,9 @@ name: USD→BRL Email
 
 on:
   schedule:
-    - cron: "42 10 * * *"
+    - cron: "50 10 * * *"
       timezone: "America/Sao_Paulo"
+
   workflow_dispatch: {}
 
 permissions:
@@ -12,6 +13,7 @@ permissions:
 jobs:
   email:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,15 +26,23 @@ jobs:
       - name: Install deps
         run: pip install requests
 
+      - name: Check execution time
+        run: |
+          echo "=== HORÁRIO DA EXECUÇÃO ==="
+          echo "UTC:"
+          date -u
+          echo "São Paulo:"
+          TZ=America/Sao_Paulo date
+
       - name: Sanity check (secrets)
         env:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          TO_EMAIL:  ${{ secrets.TO_EMAIL }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
         run: |
           for v in SMTP_USER SMTP_PASS TO_EMAIL; do
             if [ -z "${!v}" ]; then
-              echo "::error title=Missing secret::$v não está definido. Vá em Settings > Secrets and variables > Actions."
+              echo "::error title=Missing secret::$v não está definido."
               exit 1
             fi
           done
@@ -44,7 +54,7 @@ jobs:
           SMTP_PORT: 465
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          TO_EMAIL:  ${{ secrets.TO_EMAIL }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
           FROM_NAME: "USD/BRL Bot"
           SUBJECT_PREFIX: "[Cotação]"
         run: python usd_brl_email.py
