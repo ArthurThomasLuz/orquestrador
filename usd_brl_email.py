@@ -102,7 +102,7 @@ if not from_email or not to_email:
 msg = EmailMessage()
 msg["From"] = f"{from_name} <{from_email}>"
 msg["To"] = to_email
-    msg["Subject"] = subject
+msg["Subject"] = subject
     msg.set_content(text)
     msg.add_alternative(html, subtype="html")
     return msg
