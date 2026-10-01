@@ -2,8 +2,8 @@ name: USD→BRL Email
 
 on:
   schedule:
-    # 12:30 UTC ≈ 9:30 BRT (sem horário de verão)
-    - cron: "10 13 * * *"
+    - cron: "20 10 * * *"
+      timezone: "America/Sao_Paulo"
   workflow_dispatch: {}
 
 permissions:
