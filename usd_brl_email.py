@@ -89,15 +89,19 @@ def build_email(date_str: str, usd_brl: float, usd_eur: float) -> EmailMessage:
       </p>
     </body></html>"""
 
-    from_name = os.getenv("FROM_NAME", "USD/BRL Bot")
-    from_email = os.getenv("SMTP_USER")
-    to_email = os.getenv("TO_EMAIL")
-    if not from_email or not to_email:
-        raise RuntimeError("Defina SMTP_USER (remetente) e TO_EMAIL (destinatário) nos segredos/variáveis.")
+from_name = os.getenv("FROM_NAME", "USD/BRL Bot").strip()
+from_email = os.getenv("SMTP_USER", "").strip()
+to_email = os.getenv("TO_EMAIL", "").strip()
 
-    msg = EmailMessage()
-    msg["From"] = f"{from_name} <{from_email}>"
-    msg["To"] = to_email
+if not from_email or not to_email:
+    raise RuntimeError(
+        "Defina SMTP_USER (remetente) e TO_EMAIL (destinatário) "
+        "nos segredos/variáveis."
+    )
+
+msg = EmailMessage()
+msg["From"] = f"{from_name} <{from_email}>"
+msg["To"] = to_email
     msg["Subject"] = subject
     msg.set_content(text)
     msg.add_alternative(html, subtype="html")
